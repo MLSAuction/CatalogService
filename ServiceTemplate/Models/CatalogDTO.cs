@@ -1,6 +1,6 @@
-﻿namespace ServiceTemplate.Models
+﻿namespace CatalogService.Models
 {
-    public class ExampleDTO
+    public class CatalogDTO
     {
         public int Id { get; set; }
         public DateTime Time { get; set; }
