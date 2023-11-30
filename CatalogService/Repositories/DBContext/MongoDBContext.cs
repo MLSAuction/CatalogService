@@ -9,7 +9,7 @@ namespace CatalogService.Repositories.DBContext
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
-        public MongoDBContext(IConfiguration configuration, ILogger logger)
+        public MongoDBContext(IConfiguration configuration, ILogger <MongoDBContext> logger)
         {
             _configuration = configuration;
             _client = new MongoClient(_configuration["ConnectionString"]);

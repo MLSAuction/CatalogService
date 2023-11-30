@@ -1,14 +1,18 @@
 using CatalogService.Repositories;
+using CatalogService.Repositories.DBContext;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
-builder.Services.AddScoped<CatalogRepository>();
+builder.Services.AddScoped<MongoDBContext>();
+builder.Services.AddScoped<ICatalogRepository,CatalogRepository>();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
 
 var app = builder.Build();
 
