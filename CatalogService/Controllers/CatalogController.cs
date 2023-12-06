@@ -58,8 +58,6 @@ namespace CatalogService.Controllers
                 return BadRequest("Invalid catalog data");
             }
 
-           
-
             if (catalog.CatalogId == null)
             {
                 //Check if there is ID 
@@ -85,15 +83,14 @@ namespace CatalogService.Controllers
             {
                 return BadRequest("Invalid catalog data");
             }
-
-            if (id != catalog.CatalogId)
+            if (_catalogService.GetCatalog((int)catalog.CatalogId) == null)
             {
-                return BadRequest("Catalog ID in the request body does not match the route parameter");
+                return BadRequest("Catalog ID does not exist in the database");
             }
 
             _catalogService.UpdateCatalog(catalog);
 
-            return Ok("Catalog updated successfully");
+            return Ok(catalog); //Return the updated catalog with 200 OK
         }
 
         [HttpDelete("{id}")]
