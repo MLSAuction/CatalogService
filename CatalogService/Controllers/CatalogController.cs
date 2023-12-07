@@ -76,8 +76,8 @@ namespace CatalogService.Controllers
 
         }
 
-        [HttpPut("{id}")]
-        public IActionResult EditCatalog(int id, [FromBody] CatalogDTO catalog)
+        [HttpPut]
+        public IActionResult EditCatalog([FromBody] CatalogDTO catalog)
         {
             if (catalog == null)
             {

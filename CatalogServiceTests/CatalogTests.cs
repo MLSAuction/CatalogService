@@ -103,7 +103,7 @@ namespace CatalogServiceTests
             _catalogRepositoryStub.Setup(repo => repo.UpdateCatalog(It.IsAny<CatalogDTO>()));
 
             // Act
-            var result = _catalogController.EditCatalog(catalogId, catalog);
+            var result = _catalogController.EditCatalog(catalog);
 
             // Assert
             if (expectedResult)
