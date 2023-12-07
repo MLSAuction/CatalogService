@@ -26,6 +26,30 @@ namespace CatalogServiceTests
         }
 
         [Test]
+        public void GetAllCatalogsReturnsAllCatalogs()
+        {
+            // Arrange
+            CatalogDTO catalog1 = new CatalogDTO { CatalogId = 1};
+            CatalogDTO catalog2 = new CatalogDTO { CatalogId = 2};
+
+            var catalogs = new List<CatalogDTO> { catalog1, catalog2 };
+
+            _catalogRepositoryStub.Setup(repo => repo.GetAllCatalogs()).Returns(catalogs);
+
+            // Act
+            var result = _catalogController.GetAllCatalogs() as OkObjectResult;
+
+            // Assert
+            Assert.NotNull(result);
+            Assert.AreEqual(200, result.StatusCode);
+
+            var resultCollection = result.Value as IEnumerable<CatalogDTO>;
+            Assert.NotNull(resultCollection);
+
+            CollectionAssert.AreEquivalent(catalogs, resultCollection);
+        }
+
+        [Test]
         [TestCase(1, true)]
         [TestCase(999, false)]
         public void GetCatalogReturnsResult(int catalogId, bool expectedResult)
