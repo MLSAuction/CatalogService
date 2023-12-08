@@ -20,7 +20,7 @@ namespace CatalogService.Controllers
             _catalogService = catalogRepository;
         }
 
-        [HttpGet]
+        [HttpGet("getAll")]
         public IActionResult GetAllCatalogs()
         {
             var catalogs = _catalogService.GetAllCatalogs();
