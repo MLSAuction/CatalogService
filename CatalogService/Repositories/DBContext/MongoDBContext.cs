@@ -14,7 +14,7 @@ namespace CatalogService.Repositories.DBContext
         {
             _configuration = configuration;
             _client = new MongoClient(secret.Data.Data["ConnectionString"].ToString());
-            _database = _client.GetDatabase(secret.Data.Data["ConnectionString"].ToString());
+            _database = _client.GetDatabase(secret.Data.Data["DatabaseName"].ToString());
             _logger = logger;
         }
 
