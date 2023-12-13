@@ -58,11 +58,7 @@ namespace CatalogService.Controllers
                 return BadRequest("Invalid catalog data");
             }
 
-            if (catalog.CatalogId == null)
-            {
-                //Check if there is ID 
-                catalog.CatalogId = GenerateUniqueId();
-            }
+            catalog.CatalogId = GenerateUniqueId();
 
             if (_catalogService.GetCatalog((int)catalog.CatalogId) != null)
             {
