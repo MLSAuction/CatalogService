@@ -1,4 +1,5 @@
 ﻿using MongoDB.Driver;
+using VaultSharp.V1.Commons;
 
 namespace CatalogService.Repositories.DBContext
 {
@@ -9,11 +10,11 @@ namespace CatalogService.Repositories.DBContext
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
-        public MongoDBContext(IConfiguration configuration, ILogger <MongoDBContext> logger)
+        public MongoDBContext(IConfiguration configuration, ILogger <MongoDBContext> logger, Secret<SecretData> secret)
         {
             _configuration = configuration;
-            _client = new MongoClient(_configuration["ConnectionString"]);
-            _database = _client.GetDatabase(_configuration["DatabaseName"]);
+            _client = new MongoClient(secret.Data.Data["ConnectionString"].ToString());
+            _database = _client.GetDatabase(secret.Data.Data["ConnectionString"].ToString());
             _logger = logger;
         }
 
