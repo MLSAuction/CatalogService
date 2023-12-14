@@ -9,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
+using ImageService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -63,6 +64,7 @@ builder.Services.AddControllers();
 builder.Services.AddSingleton<Secret<SecretData>>(vaultSecret);
 builder.Services.AddScoped<MongoDBContext>();
 builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
+builder.Services.AddScoped<IImageRepository, ImageRepository>();
 
 #region Swagger
 
