@@ -32,9 +32,6 @@ IVaultClient vaultClient = new VaultClient(vaultClientSettings);
 
 Secret<SecretData> vaultSecret = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "Secrets", mountPoint: "secret");
 
-//register the secrets as a singleton so we can use dependency injection in the classes that need it
-builder.Services.AddSingleton<Secret<SecretData>>(vaultSecret);
-
 #endregion   
 
 #region Authentication
