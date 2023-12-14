@@ -2,6 +2,7 @@
 using CatalogService.Repositories;
 using CatalogService.Models;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace CatalogService.Controllers
 {
@@ -20,6 +21,11 @@ namespace CatalogService.Controllers
             _catalogService = catalogRepository;
         }
 
+        /// <summary>
+        /// Gets all catalog items
+        /// </summary>
+        /// <returns></returns>
+        [Authorize]
         [HttpGet("getAll")]
         public IActionResult GetAllCatalogs()
         {
@@ -33,6 +39,12 @@ namespace CatalogService.Controllers
             return Ok(catalogs);
         }
 
+        /// <summary>
+        /// Gets a catalog item by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public IActionResult GetCatalog(int id)
         {
@@ -49,6 +61,15 @@ namespace CatalogService.Controllers
             return Ok(catalog);
         }
 
+        /// <summary>
+        /// Adds a catalog item from object
+        /// </summary>
+        /// <param name="catalog"></param>
+        /// <remarks>
+        /// Always generates random id
+        /// </remarks>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost]
         public IActionResult AddCatalog([FromBody] CatalogDTO catalog)
         {
@@ -72,6 +93,12 @@ namespace CatalogService.Controllers
 
         }
 
+        /// <summary>
+        /// Edits a catalog object using the id to find and replace
+        /// </summary>
+        /// <param name="catalog"></param>
+        /// <returns></returns>
+        [Authorize]
         [HttpPut]
         public IActionResult EditCatalog([FromBody] CatalogDTO catalog)
         {
@@ -89,6 +116,12 @@ namespace CatalogService.Controllers
             return Ok(catalog); //Return the updated catalog with 200 OK
         }
 
+        /// <summary>
+        /// Deletes a catalog item by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [Authorize]
         [HttpDelete("{id}")]
         public IActionResult DeleteCatalog(int id)
         {

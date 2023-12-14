@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ImageService.Repositories;
 using ImageService.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace ImageService.Controllers
 {
@@ -18,7 +19,13 @@ namespace ImageService.Controllers
             _configuration = configuration;
             _repository = repository;
         }
-        
+
+        /// <summary>
+        /// Gets an image by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
         [HttpGet("{id}")]
         public IActionResult GetImage(int id)
         {
@@ -35,8 +42,12 @@ namespace ImageService.Controllers
             return Ok(image);
         }
 
-
-
+        /// <summary>
+        /// Uploads an image from a file and returns the object with id and name
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [Authorize]
         [HttpPost, DisableRequestSizeLimit]
         public IActionResult UploadImage(IFormFile file)
         {
@@ -57,6 +68,12 @@ namespace ImageService.Controllers
             return BadRequest();
         }
 
+        /// <summary>
+        /// Deletes an image by id
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        [Authorize]
         [HttpDelete]
         public IActionResult Delete(int imageId) 
         {
