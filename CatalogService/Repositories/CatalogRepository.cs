@@ -22,13 +22,12 @@ namespace CatalogService.Repositories
 
         }
 
-
         public IEnumerable<CatalogDTO> GetAllCatalogs()
         {
             return _db.Find(_ => true).ToList();
         }
 
-        public CatalogDTO GetCatalog(int id)
+        public CatalogDTO GetCatalog(Guid id)
         {
             // Use MongoDB's LINQ methods to query for a Catalog by ID
             return _db.Find(u => u.CatalogId == id).FirstOrDefault();
@@ -47,7 +46,7 @@ namespace CatalogService.Repositories
             _db.ReplaceOne(filter, catalog);
         }
 
-        public void DeleteCatalog(int id)
+        public void DeleteCatalog(Guid id)
         {
             // Delete a Catalog document by ID
             var filter = Builders<CatalogDTO>.Filter.Eq(u => u.CatalogId, id);

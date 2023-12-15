@@ -46,7 +46,7 @@ namespace CatalogService.Controllers
         /// <returns></returns>
         [AllowAnonymous]
         [HttpGet("{id}")]
-        public IActionResult GetCatalog(int id)
+        public IActionResult GetCatalog(Guid id)
         {
 
             CatalogDTO catalog = _catalogService.GetCatalog(id);
@@ -81,7 +81,7 @@ namespace CatalogService.Controllers
 
             catalog.CatalogId = GenerateUniqueId();
 
-            if (_catalogService.GetCatalog((int)catalog.CatalogId) != null)
+            if (_catalogService.GetCatalog((Guid)catalog.CatalogId) != null)
             {
                 // Handle the case where the ID already exists (e.g., generate a new ID, so it doesnt match the already exist)
                 catalog.CatalogId = GenerateUniqueId();
@@ -106,7 +106,7 @@ namespace CatalogService.Controllers
             {
                 return BadRequest("Invalid catalog data");
             }
-            if (_catalogService.GetCatalog((int)catalog.CatalogId) == null)
+            if (_catalogService.GetCatalog((Guid)catalog.CatalogId) == null)
             {
                 return BadRequest("Catalog ID does not exist in the database");
             }
@@ -123,7 +123,7 @@ namespace CatalogService.Controllers
         /// <returns></returns>
         [Authorize]
         [HttpDelete("{id}")]
-        public IActionResult DeleteCatalog(int id)
+        public IActionResult DeleteCatalog(Guid id)
         {
             var catalog = _catalogService.GetCatalog(id);
 
@@ -139,9 +139,9 @@ namespace CatalogService.Controllers
 
 
 
-        private int GenerateUniqueId()
+        private Guid GenerateUniqueId()
         {
-            return Math.Abs(Guid.NewGuid().GetHashCode());
+            return Guid.NewGuid();
         }
     }
 }

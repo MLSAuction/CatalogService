@@ -8,10 +8,10 @@ namespace CatalogService.Repositories
 	public interface ICatalogRepository
 	{
 		IEnumerable<CatalogDTO> GetAllCatalogs();
-		CatalogDTO GetCatalog(int id);
+		CatalogDTO GetCatalog(Guid id);
 		void AddCatalog(CatalogDTO catalog);
 		void UpdateCatalog(CatalogDTO catalog);
-		void DeleteCatalog(int id);
+		void DeleteCatalog(Guid id);
 
 
 		
