@@ -29,8 +29,8 @@ namespace CatalogServiceTests
         public void GetAllCatalogsReturnsAllCatalogs()
         {
             // Arrange
-            CatalogDTO catalog1 = new CatalogDTO { CatalogId = 1};
-            CatalogDTO catalog2 = new CatalogDTO { CatalogId = 2};
+            CatalogDTO catalog1 = new CatalogDTO { CatalogId = Guid.Parse("39e30ada-6745-4322-913f-b2e8496a8c67")};
+            CatalogDTO catalog2 = new CatalogDTO { CatalogId = Guid.Parse("39e30ada-6745-4322-913f-b2e8496a8c67")};
 
             var catalogs = new List<CatalogDTO> { catalog1, catalog2 };
 
@@ -49,16 +49,18 @@ namespace CatalogServiceTests
             CollectionAssert.AreEquivalent(catalogs, resultCollection);
         }
 
+        
         [Test]
-        [TestCase(1, true)]
-        [TestCase(999, false)]
-        public void GetCatalogReturnsResult(int catalogId, bool expectedResult)
+        [TestCase("ea968fbc-6de1-48b3-a3ee-b151920c4dbb", true)]
+        [TestCase("ea968fbc-6de1-48b3-a3ee-b151920c4999", false)]
+        public void GetCatalogReturnsResult(Guid catalogId, bool expectedResult)
         {
             // Arrange
             CatalogDTO catalog = new CatalogDTO { CatalogId = catalogId };
 
             _catalogRepositoryStub.Setup(repo => repo.GetCatalog(catalogId)).Returns(catalog);
-            _catalogRepositoryStub.Setup(repo => repo.GetCatalog(999)).Returns((CatalogDTO)null); // Nonexistent catalogId
+            _catalogRepositoryStub.Setup(repo => repo.GetCatalog(Guid.Parse("ea968fbc-6de1-48b3-a3ee-b151920c4999"))).Returns((CatalogDTO)null); // Nonexistent catalogId
+            
 
             // Act
             var result = _catalogController.GetCatalog(catalogId);
@@ -81,16 +83,17 @@ namespace CatalogServiceTests
             }
         }
 
+        
         [Test]
-        [TestCase(1, true)]
-        [TestCase(999, false)]
-        public void DeleteCatalogReturnsResult(int catalogId, bool expectedResult)
+        [TestCase("ea968fbc-6de1-48b3-a3ee-b151920c4dbb", true)]
+        [TestCase("ea968fbc-6de1-48b3-a3ee-b151920c4999", false)]
+        public void DeleteCatalogReturnsResult(Guid catalogId, bool expectedResult)
         {
             // Arrange
             CatalogDTO catalog = new CatalogDTO { CatalogId = catalogId };
 
             _catalogRepositoryStub.Setup(repo => repo.GetCatalog(catalogId)).Returns(catalog);
-            _catalogRepositoryStub.Setup(repo => repo.GetCatalog(999)).Returns((CatalogDTO)null); // Nonexistent catalogId
+            _catalogRepositoryStub.Setup(repo => repo.GetCatalog(Guid.Parse("ea968fbc-6de1-48b3-a3ee-b151920c4999"))).Returns((CatalogDTO)null); // Nonexistent catalogId
             _catalogRepositoryStub.Setup(repo => repo.DeleteCatalog(catalogId));
 
             // Act
@@ -113,17 +116,17 @@ namespace CatalogServiceTests
                 Assert.AreEqual(404, notFoundResult.StatusCode);
             }
         }
-
+        
         [Test]
-        [TestCase(1, true)]
-        [TestCase(999, false)]
-        public void EditCatalogReturnsResult(int catalogId, bool expectedResult)
+        [TestCase("ea968fbc-6de1-48b3-a3ee-b151920c4dbb", true)]
+        [TestCase("ea968fbc-6de1-48b3-a3ee-b151920c4999", false)]
+        public void EditCatalogReturnsResult(Guid catalogId, bool expectedResult)
         {
             // Arrange
             CatalogDTO catalog = new CatalogDTO { CatalogId = catalogId };
 
             _catalogRepositoryStub.Setup(repo => repo.GetCatalog(catalogId)).Returns(catalog);
-            _catalogRepositoryStub.Setup(repo => repo.GetCatalog(999)).Returns((CatalogDTO)null); // Nonexistent catalogId
+            _catalogRepositoryStub.Setup(repo => repo.GetCatalog(Guid.Parse("ea968fbc-6de1-48b3-a3ee-b151920c4999"))).Returns((CatalogDTO)null); // Nonexistent catalogId
             _catalogRepositoryStub.Setup(repo => repo.UpdateCatalog(It.IsAny<CatalogDTO>()));
 
             // Act
@@ -147,9 +150,6 @@ namespace CatalogServiceTests
                 Assert.AreEqual("Catalog ID does not exist in the database", badRequestResult.Value);
             }
         }
-
-
-
 
 
     }

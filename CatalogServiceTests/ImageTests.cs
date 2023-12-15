@@ -27,7 +27,7 @@ namespace ImageServiceTests
 
             _imageController = new ImageController(_loggerMock.Object, _configurationMock.Object, _imageRepositoryStub.Object);
         }
-
+        
         [Test]
         public void GetImage_ValidImageId_ReturnsOkResult()
         {
@@ -87,6 +87,6 @@ namespace ImageServiceTests
             // Ensure that DeleteImage method was called with the correct imageId
             _imageRepositoryStub.Verify(repo => repo.DeleteImage(validImageId), Times.Once);
         }
-
+        
     }
 }
