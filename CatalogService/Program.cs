@@ -13,30 +13,44 @@ using ImageService.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
-#region Vault
+#region Configuration
 
-var EndPoint = Environment.GetEnvironmentVariable("vaultUrl");
-var httpClientHandler = new HttpClientHandler();
-httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => { return true; };
+var vaultUrl = Environment.GetEnvironmentVariable("vaultUrl");
 
-IAuthMethodInfo authMethod = new TokenAuthMethodInfo("00000000-0000-0000-0000-000000000000"); //undersøg om er korrekt
-
-var vaultClientSettings = new VaultClientSettings(EndPoint, authMethod)
+if (string.IsNullOrEmpty(vaultUrl)) //azure flow
 {
-    Namespace = "",
-    MyHttpClientProviderFunc = handler => new HttpClient(httpClientHandler) { BaseAddress = new Uri(EndPoint) }
-};
+    // need ConnectionString, DatabaseName, jwtSecret, jwtIssuer and LokiEndpoint in bicep env variables
+}
+else //compose flow
+{
+    var httpClientHandler = new HttpClientHandler();
+    httpClientHandler.ServerCertificateCustomValidationCallback = (message, cert, chain, sslPolicyErrors) => { return true; };
 
-IVaultClient vaultClient = new VaultClient(vaultClientSettings);
+    IAuthMethodInfo authMethod = new TokenAuthMethodInfo("00000000-0000-0000-0000-000000000000"); //undersøg om er korrekt
 
-Secret<SecretData> vaultSecret = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "Secrets", mountPoint: "secret");
+    var vaultClientSettings = new VaultClientSettings(vaultUrl, authMethod)
+    {
+        Namespace = "",
+        MyHttpClientProviderFunc = handler => new HttpClient(httpClientHandler) { BaseAddress = new Uri(vaultUrl) }
+    };
+
+    IVaultClient vaultClient = new VaultClient(vaultClientSettings);
+
+    Secret<SecretData> vaultSecret = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "Secrets", mountPoint: "secret");
+
+    Environment.SetEnvironmentVariable("LokiEndpoint", "http://loki:3100"); //compose
+    Environment.SetEnvironmentVariable("jwtSecret", vaultSecret.Data.Data["jwtSecret"].ToString());
+    Environment.SetEnvironmentVariable("jwtIssuer", vaultSecret.Data.Data["jwtIssuer"].ToString());
+    Environment.SetEnvironmentVariable("ConnectionString", vaultSecret.Data.Data["ConnectionString"].ToString());
+    Environment.SetEnvironmentVariable("DatabaseName", vaultSecret.Data.Data["DatabaseName"].ToString());
+}
 
 #endregion   
 
 #region Authentication
 
-string jwtSecret = vaultSecret.Data.Data["jwtSecret"].ToString() ?? string.Empty;
-string jwtIssuer = vaultSecret.Data.Data["jwtIssuer"].ToString() ?? string.Empty;
+string jwtSecret = Environment.GetEnvironmentVariable("jwtSecret");
+string jwtIssuer = Environment.GetEnvironmentVariable("jwtIssuer");
 
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -57,7 +71,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 
 // Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSingleton<Secret<SecretData>>(vaultSecret);
 builder.Services.AddScoped<MongoDBContext>();
 builder.Services.AddScoped<ICatalogRepository, CatalogRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();

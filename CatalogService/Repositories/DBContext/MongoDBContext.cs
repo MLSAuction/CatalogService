@@ -10,11 +10,11 @@ namespace CatalogService.Repositories.DBContext
         private readonly IConfiguration _configuration;
         private readonly ILogger _logger;
 
-        public MongoDBContext(IConfiguration configuration, ILogger <MongoDBContext> logger, Secret<SecretData> secret)
+        public MongoDBContext(IConfiguration configuration, ILogger <MongoDBContext> logger)
         {
             _configuration = configuration;
-            _client = new MongoClient(secret.Data.Data["ConnectionString"].ToString());
-            _database = _client.GetDatabase(secret.Data.Data["DatabaseName"].ToString());
+            _client = new MongoClient(Environment.GetEnvironmentVariable("ConnectionString"));
+            _database = _client.GetDatabase(Environment.GetEnvironmentVariable("DatabaseName"));
             _logger = logger;
         }
 
