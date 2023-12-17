@@ -2,11 +2,12 @@ using NUnit.Framework;
 using Moq;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
-using ImageService.Controllers;
 using ImageService.Models;
 using ImageService.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
+using CatalogService.Controllers;
+using CatalogService.Repositories;
 
 namespace ImageServiceTests
 {
@@ -14,20 +15,22 @@ namespace ImageServiceTests
     public class ImageControllerTests
     {
         private Mock<IImageRepository> _imageRepositoryStub;
-        private Mock<ILogger<ImageController>> _loggerMock;
+        private Mock<ICatalogRepository> _catalogRepositoryStub;
+        private Mock<ILogger<CatalogController>> _loggerMock;
         private Mock<IConfiguration> _configurationMock;
-        private ImageController _imageController;
+        private CatalogController _imageController;
 
         [SetUp]
         public void Setup()
         {
+            _catalogRepositoryStub = new Mock<ICatalogRepository>();
             _imageRepositoryStub = new Mock<IImageRepository>();
-            _loggerMock = new Mock<ILogger<ImageController>>();
-            _configurationMock = new Mock<IConfiguration>();
+            var loggerMock = new Mock<ILogger<CatalogController>>();
+            var configurationMock = new Mock<IConfiguration>();
 
-            _imageController = new ImageController(_loggerMock.Object, _configurationMock.Object, _imageRepositoryStub.Object);
+            _imageController = new CatalogController(loggerMock.Object, configurationMock.Object, _catalogRepositoryStub.Object, _imageRepositoryStub.Object);
         }
-        
+
         [Test]
         public void GetImage_ValidImageId_ReturnsOkResult()
         {
