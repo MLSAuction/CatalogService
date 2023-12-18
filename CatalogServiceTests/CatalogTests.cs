@@ -6,6 +6,7 @@ using CatalogService.Controllers;
 using CatalogService.Models;
 using CatalogService.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using ImageService.Repositories;
 
 namespace CatalogServiceTests
 {
@@ -13,16 +14,18 @@ namespace CatalogServiceTests
     public class CatalogTests
     {
         private Mock<ICatalogRepository> _catalogRepositoryStub;
+        private Mock<IImageRepository> _imageRepositoryStub;
         private CatalogController _catalogController;
 
         [SetUp]
         public void Setup()
         {
             _catalogRepositoryStub = new Mock<ICatalogRepository>();
+            _imageRepositoryStub = new Mock<IImageRepository>();
             var loggerMock = new Mock<ILogger<CatalogController>>();
             var configurationMock = new Mock<IConfiguration>();
 
-            _catalogController = new CatalogController(loggerMock.Object, configurationMock.Object, _catalogRepositoryStub.Object);
+            _catalogController = new CatalogController(loggerMock.Object, configurationMock.Object, _catalogRepositoryStub.Object, _imageRepositoryStub.Object);
         }
 
         [Test]

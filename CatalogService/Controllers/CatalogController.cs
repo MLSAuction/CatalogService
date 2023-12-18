@@ -3,6 +3,8 @@ using CatalogService.Repositories;
 using CatalogService.Models;
 using System.Linq;
 using Microsoft.AspNetCore.Authorization;
+using ImageService.Models;
+using ImageService.Repositories;
 
 namespace CatalogService.Controllers
 {
@@ -13,12 +15,14 @@ namespace CatalogService.Controllers
         private readonly ILogger _logger;
         private readonly IConfiguration _configuration;
         private readonly ICatalogRepository _catalogService;
+        private readonly IImageRepository _imageService;
 
-        public CatalogController(ILogger<CatalogController> logger, IConfiguration configuration, ICatalogRepository catalogRepository)
+        public CatalogController(ILogger<CatalogController> logger, IConfiguration configuration, ICatalogRepository catalogRepository, IImageRepository imageRepository)
         {
             _logger = logger;
             _configuration = configuration;
             _catalogService = catalogRepository;
+            _imageService = imageRepository;
         }
 
         /// <summary>
@@ -137,7 +141,74 @@ namespace CatalogService.Controllers
             return Ok("Catalog deleted successfully");
         }
 
+        /// <summary>
+        /// Gets an image by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [AllowAnonymous]
+        [HttpGet("image/{id}")]
+        public IActionResult GetImage(int id)
+        {
 
+            ImageDTO image = _imageService.GetImage(id);
+
+            if (image == null)
+            {
+                return NotFound(); // Return 404 if image is not found
+            }
+
+            _logger.LogInformation($"Image {image.ImageId} Retrieved ");
+
+            return Ok(image);
+        }
+
+        /// <summary>
+        /// Uploads an image from a file and returns the object with id and name
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpPost("image"), DisableRequestSizeLimit]
+        public IActionResult UploadImage(IFormFile file)
+        {
+            FormFile imageFile = (FormFile)Request.Form.Files[0];
+
+            if (imageFile == null)
+            {
+                return BadRequest();
+            }
+
+            ImageDTO? imageDTO = _imageService.UploadImage(imageFile);
+
+            if (imageDTO != null)
+            {
+                return Ok(imageDTO);
+            }
+
+            return BadRequest();
+        }
+
+        /// <summary>
+        /// Deletes an image by id
+        /// </summary>
+        /// <param name="imageId"></param>
+        /// <returns></returns>
+        [Authorize]
+        [HttpDelete("image")]
+        public IActionResult Delete(int imageId)
+        {
+            try
+            {
+                _imageService.DeleteImage(imageId);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, ex.Message);
+            }
+
+            return Ok();
+        }
 
         private Guid GenerateUniqueId()
         {
