@@ -53,7 +53,7 @@ namespace ImageService.Repositories
 
             try
             {
-                string uploadDirectory = _configuration["ImagePath"];
+                string uploadDirectory = Environment.GetEnvironmentVariable("ImagePath");
 
                 int imageId = GenerateUniqueId();
                 string fileExtension = Path.GetExtension(image.FileName);
