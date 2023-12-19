@@ -10,8 +10,14 @@ using System.Text;
 using Microsoft.OpenApi.Models;
 using System.Reflection;
 using ImageService.Repositories;
+using NLog.Web;
+using NLog;
+
+var logger = NLog.LogManager.Setup().LoadConfigurationFromFile("NLog.config").GetCurrentClassLogger();
+logger.Debug("Starting Catalog Service");
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseNLog();
 
 #region Configuration
 
@@ -38,7 +44,6 @@ else //compose flow
 
     Secret<SecretData> vaultSecret = await vaultClient.V1.Secrets.KeyValue.V2.ReadSecretAsync(path: "Secrets", mountPoint: "secret");
 
-    Environment.SetEnvironmentVariable("LokiEndpoint", "http://loki:3100"); //compose
     Environment.SetEnvironmentVariable("jwtSecret", vaultSecret.Data.Data["jwtSecret"].ToString());
     Environment.SetEnvironmentVariable("jwtIssuer", vaultSecret.Data.Data["jwtIssuer"].ToString());
     Environment.SetEnvironmentVariable("ConnectionString", vaultSecret.Data.Data["ConnectionString"].ToString());
